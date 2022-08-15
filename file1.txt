@@ -3,3 +3,4 @@
 456
 
 789.
+This line was added through Bash
