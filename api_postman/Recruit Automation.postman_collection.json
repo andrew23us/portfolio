@@ -1,0 +1,286 @@
+{
+	"info": {
+		"_postman_id": "97af643c-e45d-4c9a-89ac-218121246d97",
+		"name": "Recruit Automation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22469404"
+	},
+	"item": [
+		{
+			"name": "GET/positions - Get positions list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Get positions list - Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/candidates",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"candidates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST/login - Login as admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login as admin - Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"student@example.com\",\r\n    \"password\": \"welcome\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST/candidates - Create new",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.environment.set(\"candidateId\", jsonData.id);\r",
+							"\r",
+							"pm.environment.set(\"candidateEmail\", jsonData.email);\r",
+							"\r",
+							"pm.test(\"Creat new candidate - Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Expect 'city' equals 'New York'\", function () {\r",
+							"    pm.expect(jsonData.city).to.eql(\"New York\");\r",
+							"});\r",
+							"\r",
+							"/* new code */\r",
+							"\r",
+							"pm.test(\"Response have 'Content-Type: application/json; charset=utf-8' header\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Name value is a string\", function () {\r",
+							"    pm.expect(typeof jsonData.name).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"email value is not empty\", function () {\r",
+							"pm.expect(jsonData.email).not.equal(null);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"{{$randomFirstName}}\",\r\n  \"middleName\": \"\",\r\n  \"lastName\": \"{{$randomLastName}}\",\r\n  \"email\": \"{{$randomEmail}}\",\r\n  \"password\": \"123456\",\r\n  \"address\": \"{{$randomStreetAddress}}\",\r\n  \"city\": \"New York\",\r\n  \"state\": \"NY\",\r\n  \"zip\": \"11223\",\r\n  \"summary\": \"{{$randomLoremText}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/candidates",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"candidates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST/login - Login as candidate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login as candidate - Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Token variable created\", function () {\r",
+							"    pm.environment.set(\"Token\", jsonData.token);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{candidateEmail}}\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT/candidate/{id} - Change info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Change candidate info - Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"AndrewTest\",\r\n  \"middleName\": \"\",\r\n  \"lastName\": \"Zyuzikov\",\r\n  \"email\": \"{{candidateEmail}}\",\r\n  \"password\": \"123456\",\r\n  \"address\": \"1624 9th St\",\r\n  \"city\": \"New York\",\r\n  \"state\": \"NY\",\r\n  \"zip\": \"11223\",\r\n  \"summary\": \"Some summary\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/candidates/{{candidateId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"candidates",
+						"{{candidateId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE/candidate/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete candidate - Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/candidates/{{candidateId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"candidates",
+						"{{candidateId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
